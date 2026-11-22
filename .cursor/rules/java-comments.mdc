@@ -1,0 +1,82 @@
+---
+description: Java documentation comments — Javadoc, OpenAPI annotations, and inline comments
+globs: **/*.java
+alwaysApply: false
+---
+
+# Java comments
+
+Write comments in English, directly in the source file. If an applicable `AGENTS.md` (the project root, or a closer one in a parent directory of the file) sets a different comment language, follow that language instead. Do not add scripts, generators, or bulk-edit tooling whose purpose is to create or update comments.
+
+## Javadoc
+
+Add a 1–2 line Javadoc on every class, field, and method that is not covered by OpenAPI annotations below. Skip injected bean fields in services and controllers, as described under Injected beans.
+
+```java
+/** Loads a user by id and returns the public profile. */
+public UserProfile loadProfile(UUID id) { ... }
+
+/** Stable identifier of the user. */
+private final UUID id;
+```
+
+## OpenAPI instead of Javadoc
+
+When the project uses Swagger OpenAPI (`io.swagger.v3.oas.annotations`):
+
+- Document controllers and their methods with `@Tag`, `@Operation`, `@Parameter`, `@ApiResponse`, and related annotations. Do not add Javadoc on those types and methods.
+- If a class appears in OpenAPI Schemas, document its informational fields with `@Schema`. Do not add Javadoc on those fields.
+
+Keep Javadoc on types and members that are not part of the OpenAPI surface.
+
+```java
+@Tag(name = "Users", description = "Read and update user profiles.")
+@RestController
+public class UserController {
+
+    @Operation(summary = "Returns the public profile for a user id.")
+    @ApiResponse(responseCode = "200", description = "Profile found.")
+    @GetMapping("/users/{id}")
+    public UserProfile get(@Parameter(description = "User id.") @PathVariable UUID id) { ... }
+}
+
+@Schema(name = "UserProfile")
+public class UserProfile {
+
+    @Schema(description = "Stable identifier of the user.")
+    private UUID id;
+}
+```
+
+## Injected beans
+
+Do not add a comment on a field of a service or controller when that field is an injected bean (constructor injection, `@Autowired`, `@Inject`, or an equivalent container-managed dependency).
+
+If such a field already has a comment, leave it. Do not remove or rewrite it only because the field is an injected bean.
+
+```java
+@Service
+public class UserService {
+
+    private final UserRepository users;
+
+    public UserService(UserRepository users) {
+        this.users = users;
+    }
+}
+```
+
+## When code changes
+
+After changing a class, method, or field, re-read the comments on the types you touched and update any that no longer match the code.
+
+## Inline comments
+
+If a method’s logic is hard to follow, add short `//` comments at the non-obvious steps. Do not restate what the code already says.
+
+```java
+// Retry only transient timeouts; a 4xx is a permanent client error.
+if (status >= 500) {
+    return backoff(attempt);
+}
+```
