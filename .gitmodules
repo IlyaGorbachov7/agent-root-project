@@ -1,0 +1,4 @@
+[submodule "projects/client-app"]
+	path = projects/client-app
+	url = git@github.com:Koreanika/client-app.git
+	branch = main
