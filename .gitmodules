@@ -2,3 +2,11 @@
 	path = projects/client-app
 	url = git@github.com:Koreanika/client-app.git
 	branch = main
+[submodule "docs"]
+	path = docs
+	url = git@github.com:IlyaGorbachov7/docs.git
+	branch = master
+[submodule "openspec"]
+	path = openspec
+	url = git@github.com:IlyaGorbachov7/openspec.git
+	branch = master
